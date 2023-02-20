@@ -2,6 +2,7 @@ package com.example.servicestest
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
@@ -27,18 +28,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showNotification() {
-        val notificationChannel = NotificationChannel(
-            CHANNEL_ID,
-            CHANNEL_NAME,
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                CHANNEL_ID,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Title")
             .setContentText("Text")
             .setSmallIcon(R.drawable.ic_launcher_background)
             .build()
-
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(id++, notification)
     }
 
