@@ -6,6 +6,8 @@ import android.app.job.JobWorkItem
 import android.content.ComponentName
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import com.example.servicestest.databinding.ActivityMainBinding
 
 
@@ -39,6 +41,17 @@ class MainActivity : AppCompatActivity() {
 
             val intent = MyJobService.newIntent(page++)
             jobScheduler.enqueue(jobInfo, JobWorkItem(intent))
+        }
+        binding.jobIntentService.setOnClickListener {
+            MyJobIntentService.enqueue(this, page++)
+        }
+        binding.workManager.setOnClickListener {
+            val workManager = WorkManager.getInstance(applicationContext)
+            workManager.enqueueUniqueWork(
+                MyWorker.WORK_NAME,
+                ExistingWorkPolicy.APPEND,
+                MyWorker.makeRequest(page++)
+            )
         }
     }
 }
